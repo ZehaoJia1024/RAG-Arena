@@ -1,5 +1,7 @@
 import os
 from typing import Union, List
+
+import torch
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
@@ -13,7 +15,10 @@ class Embedder:
     """
 
     def __init__(self):
-        self.model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
+        self.model = SentenceTransformer(
+            "Qwen/Qwen3-Embedding-0.6B",
+            model_kwargs={"torch_dtype": torch.float16}
+        )
 
     def embed(
             self,
@@ -34,6 +39,3 @@ class Embedder:
     ) -> Union[List[dict], List[List[dict]]]:
         top_k_indices = np.argsort(similarity_matrix, axis=1)[:, -k:][:, ::-1]
         return top_k_indices.tolist()
-
-
-
